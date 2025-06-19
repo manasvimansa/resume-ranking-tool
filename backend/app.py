@@ -1,14 +1,17 @@
 # app.py
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS 
 import os
+app = Flask(__name__)
+CORS(app)
 
-# ── Cell 1: Basic Setup ──────────────────────────────────────────────────────
+# Basic Setup ──────────────────────────────────────────────────────
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ── Cell 4: /extract_skills Endpoint ─────────────────────────────────────────
+# /extract_skills Endpoint ─────────────────────────────────────────
 @app.route("/extract_skills", methods=["POST"])
 def extract_skills_route():
     data = request.get_json()
@@ -18,7 +21,7 @@ def extract_skills_route():
     skills = extract_skills(data["resume_text"])
     return jsonify({"skills": list(skills)})
 
-# ── Cell 5: /extract_keywords Endpoint ───────────────────────────────────────
+# extract_keywords Endpoint ───────────────────────────────────────
 @app.route("/extract_keywords", methods=["POST"])
 def extract_keywords_route():
     data = request.get_json()
@@ -28,7 +31,7 @@ def extract_keywords_route():
     keywords = extract_keywords(data["text"])
     return jsonify({"keywords": list(keywords)})
 
-# ── Cell 6: /extract_entities Endpoint ───────────────────────────────────────
+# extract_entities Endpoint ───────────────────────────────────────
 @app.route("/extract_entities", methods=["POST"])
 def extract_entities_route():
     data = request.get_json()
@@ -38,7 +41,7 @@ def extract_entities_route():
     entities = extract_entities(data["text"])
     return jsonify({"entities": entities})
 
-# ── Cell 7: /summarize Endpoint ─────────────────────────────────────────────
+# summarize Endpoint ─────────────────────────────────────────────
 @app.route("/summarize", methods=["POST"])
 def summarize_route():
     data = request.get_json()
@@ -49,7 +52,7 @@ def summarize_route():
     summary = summarize_text(data["text"], n_sentences)
     return jsonify({"summary": summary})
 
-# ── Cell 8: /match_skills Endpoint ───────────────────────────────────────────
+# match_skills Endpoint ───────────────────────────────────────────
 @app.route("/match_skills", methods=["POST"])
 def match_skills_route():
     data = request.get_json()
@@ -70,7 +73,7 @@ def match_skills_route():
         "skill_score": round(skill_score, 2)
     })
 
-# ── Cell 9: /resume_score Endpoint ───────────────────────────────────────────
+# resume_score Endpoint ───────────────────────────────────────────
 @app.route("/resume_score", methods=["POST"])
 def resume_score_route():
     data = request.get_json()
@@ -80,7 +83,7 @@ def resume_score_route():
     final_score = calculate_resume_score(data["resume_text"], data["job_description"])
     return jsonify({"final_score": round(final_score, 2)})
 
-# ── Cell 10: /upload Endpoint (PDF + Job Desc) ───────────────────────────────
+# /upload Endpoint (PDF + Job Desc) ───────────────────────────────
 @app.route("/upload", methods=["POST"])
 def upload_resume():
     if "resume" not in request.files or "job_description" not in request.form:
@@ -104,6 +107,6 @@ def upload_resume():
 
     return jsonify(result)
 
-# ── Cell 11: Run the App ──────────────────────────────────────────────────────
+#  Run the App ──────────────────────────────────────────────────────
 if __name__ == "__main__":
     app.run(debug=True)
